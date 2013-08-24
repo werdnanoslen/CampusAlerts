@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding = "utf-8" ?>
+<widget title="CampusAlerts">
+    <library name="jquery"/>
+    <library name="jquery.url"/>
+    <library name="gtmob"/>
+	
+    <html file="app.html"/>
+    <css file="app.css"/>
+	<javascript file="app.js"/>
+    <library name="jquery.mobile"/> 
+</widget>
+
