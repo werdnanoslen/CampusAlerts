@@ -3,7 +3,7 @@ CampusAlerts
 
 Compiles and alerts users to important events on campus
 
-[Demo CampusAlerts](m.cip.gatech.edu/developer/anelson35/w/CampusAlerts)
+[Demo CampusAlerts](http://m.cip.gatech.edu/developer/anelson35/w/CampusAlerts/content/)
 
 As this is initially for the Georgia Tech community, this app is built on the [GTMob](http://gtmob.gatech.edu/) platform using jQuery Mobile.
 
