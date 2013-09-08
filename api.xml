@@ -8,7 +8,7 @@
 	    <description><![CDATA[Interact with GTPD crime logs]]></description>
 	    <index>
 		    <description><![CDATA[Get all crime logs]]></description>
-		    <action file='app.php'><![CDATA[getCrimeLogs();]]></action>
+		    <action file='app.php'><![CDATA[echo json_encode(getCrimeLogs());]]></action>
 	    </index>
     </command>
     
@@ -16,7 +16,7 @@
 	    <description><![CDATA[Interact with GTPD non-crime logs]]></description>
 	    <index>
 		    <description><![CDATA[Get all non-crime logs]]></description>
-		    <action file='app.php'><![CDATA[getNonCrimeLogs();]]></action>
+		    <action file='app.php'><![CDATA[echo json_encode(getNonCrimeLogs());]]></action>
 	    </index>
     </command>
     
