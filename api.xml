@@ -4,19 +4,11 @@
 		<![CDATA[API for CampusAlerts]]>
 	</description>
 	
-	<command id='crimelogs' security='public'>
-	    <description><![CDATA[Interact with GTPD crime logs]]></description>
+	<command id='logs' security='public'>
+	    <description><![CDATA[Interact with GTPD crime/non-crime logs]]></description>
 	    <index>
-		    <description><![CDATA[Get all crime logs]]></description>
-		    <action file='app.php'><![CDATA[echo json_encode(getCrimeLogs());]]></action>
-	    </index>
-    </command>
-    
-    <command id='noncrimelogs' security='public'>
-	    <description><![CDATA[Interact with GTPD non-crime logs]]></description>
-	    <index>
-		    <description><![CDATA[Get all non-crime logs]]></description>
-		    <action file='app.php'><![CDATA[echo json_encode(getNonCrimeLogs());]]></action>
+		    <description><![CDATA[Get all logs]]></description>
+		    <action file='app.php'><![CDATA[echo json_encode(getLogs());]]></action>
 	    </index>
     </command>
     

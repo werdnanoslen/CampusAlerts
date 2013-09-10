@@ -1,36 +1,36 @@
 <?php
 
 
-function getCrimeLogs() 
+function getLogs() 
 {
-    //Get table and feed it into an array by row
+    //Get crime table and feed it into an array by row
     $url = "http://www.police.gatech.edu/crimeinfo/crimelogs/crimelog.php";
 	$dom = new DOMDocument;
     $dom->loadHTMLFile($url);
     $table = $dom->getElementsByTagName('tr');
-    $rows = array();
+    $rowsCrime = array();
     for ($i = 0; $i < $table->length; ++$i) 
     {
-        $rows[$i] = $table->item($i);
+        $rowsCrime[$i] = $table->item($i);
     }
-    
     //Chop out the useless rows (before and including the black header)
     for ($i = 5; $i >= 0; --$i)
     {
-        unset($rows[$i]);
+        unset($rowsCrime[$i]);
     }
-    $rows = array_values($rows);
+    $rowsCrime = array_values($rowsCrime);
     
     //Organize into array of reports
     $reports = array();
-    for ($i = 0; $i < count($rows); $i+=2) 
+    for ($i = 0; $i < count($rowsCrime); $i+=2) 
     {
-        $td = $rows[$i]->getElementsByTagName('td');
+        $td = $rowsCrime[$i]->getElementsByTagName('td');
         $occurred = trimHarder($td->item(2)->nodeValue);
-        $location = substr($rows[$i+1]->nodeValue, 10, strpos($rows[$i+1]->nodeValue, ": Nature:")-10);
-        $reports[$i/2] = array
+        $location = substr($rowsCrime[$i+1]->nodeValue, 10, strpos($rowsCrime[$i+1]->nodeValue, ": Nature:")-10);
+        $reports[trimHarder($td->item(0)->nodeValue)] = array
         (
             "Case Number"=>trimHarder($td->item(0)->nodeValue),
+            "Criminal"=>true,
             "Date Reported"=>trimHarder($td->item(1)->nodeValue),
             "Occurred"=>array
             (
@@ -44,44 +44,41 @@ function getCrimeLogs()
             "Location"=>array
             (
                 "Name"=>substr($location, 0, strpos($location, " - ")),
-                "Address"=>preg_replace("/@/", "&", substr($location, strpos($location, " - ") ? strpos($location, " - ")+3 : 0)),
+                //Google geocode prefers '&' for intersections, instead of '@'
+                "Address"=>str_replace("@", "&", substr($location, strpos($location, " - ") ? strpos($location, " - ")+3 : 0)),
             ),
-            "Nature"=>trimHarder(substr($rows[$i+1]->nodeValue, strpos($rows[$i+1]->nodeValue, ": Nature: ")+10)),
+            "Nature"=>trimHarder(substr($rowsCrime[$i+1]->nodeValue, strpos($rowsCrime[$i+1]->nodeValue, ": Nature: ")+10)),
         );
     }
-    return $reports;
-}
-
-
-function getNonCrimeLogs()
-{
-    //Get table and feed it into an array by row
+    
+    //Get non-crime table and feed it into an array by row
     $url = "http://www.police.gatech.edu/crimeinfo/crimelogs/noncrimelog.php";
 	$dom = new DOMDocument;
     $dom->loadHTMLFile($url);
     $table = $dom->getElementsByTagName('tr');
-    $rows = array();
+    $rowsNonCrime = array();
     for ($i = 0; $i < $table->length; ++$i) 
     {
-        $rows[$i] = $table->item($i);
+        $rowsNonCrime[$i] = $table->item($i);
     }
-    
     //Chop out the useless rows (before and including the black header)
     for ($i = 5; $i >= 0; --$i)
     {
-        unset($rows[$i]);
+        unset($rowsNonCrime[$i]);
     }
-    $rows = array_values($rows);
+    $rowsNonCrime = array_values($rowsNonCrime);
     
-    //Organize into array of reports
-    $reports = array();
-    for ($i = 0; $i < count($rows); $i+=2) 
+    //Add non-crime reports
+    for ($i = 0; $i < count($rowsNonCrime); $i+=2) 
     {
-        $td = $rows[$i]->getElementsByTagName('td');
+        $td = $rowsNonCrime[$i]->getElementsByTagName('td');
         $occurred = trimHarder($td->item(2)->nodeValue);
-        $reports[$i/2] = array
+        $td2 = trimHarder($rowsNonCrime[$i+1]->nodeValue);
+        $location = substr($td2, 9, strpos($td2, " Nature:")-9);
+        $reports[trimHarder($td->item(0)->nodeValue)] = array
         (
             "Case Number"=>trimHarder($td->item(0)->nodeValue),
+            "Criminal"=>false,
             "Date Reported"=>trimHarder($td->item(1)->nodeValue),
             "Occurred"=>array
             (
@@ -92,10 +89,19 @@ function getNonCrimeLogs()
             ),
             "Disposition"=>trimHarder($td->item(3)->nodeValue),
             "Status"=>trimHarder($td->item(4)->nodeValue),
-            "Location"=>substr($rows[$i+1]->nodeValue, 10, strpos($rows[$i+1]->nodeValue, ": Nature:")-10),
-            "Nature"=>substr($rows[$i+1]->nodeValue, strpos($rows[$i+1]->nodeValue, ": Nature: ")+10),
+            "Location"=>array
+            (
+                "Name"=>substr($location, 0, strpos($location, " - ")),
+                //Google geocode prefers '&' for intersections, instead of '@'
+                "Address"=>str_replace("@", "&", substr($location, strpos($location, " - ") ? strpos($location, " - ")+3 : 0)),
+            ),
+            "Nature"=>trim(str_replace(chr(194).chr(160), '', substr($td2, strpos($td2, "Nature:")+9))),
         );
     }
+    
+    //Sort by case number, which is also chronologically assigned
+    ksort($reports);
+    
     return $reports;
 }
 
