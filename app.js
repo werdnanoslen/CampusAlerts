@@ -70,7 +70,6 @@ function getLogs(callback)
 			logs = data;
 			
 			//Sort by start date/time, anti-chronologically
-			var start = new Date();
 			logsKeys = Object.keys(logs);
 			logsKeys.sort(function(a, b)
 			{
@@ -81,8 +80,6 @@ function getLogs(callback)
 			    return timeA - timeB;
 			});
 			logsKeys.reverse();
-			var stop = new Date();
-			alert(stop - start);
 			
 			console.log('Fetched ' + Object.size(logs) + ' logs');
 			$.mobile.hidePageLoadingMsg();
@@ -92,14 +89,62 @@ function getLogs(callback)
 }
 
 
-//TODO: Get a mappable location from report
-function geocode()
+//Format time in common American 12-hour style
+function get12Hour(time)
 {
-    //First, search by address + ', Georgia Institute of Technology'
-    //If that fails, search by name + ', Georgia Institute of Technology'
-    //If that fails, search by address up to first comma + ', Georgia Institute of Technology'
-    //If that fails, search by name up to first comma + ', Georgia Institute of Technology'
-    //If that fails, just provide address as-is
+    var time12 = (((parseInt(time.substr(0, 2)) + 11) % 12) + 1) + time.substr(2);
+    time12 = '<strong>' + time12 + '</strong>';
+    return (+time.substr(0, time.indexOf(':')) < 12) ? time12 + 'AM' : tie12 + 'PM';
+}
+
+
+function geocode(location)
+{
+    var address = location['Address'];
+    var name = location['Name'];
+    var geocoder = new google.maps.Geocoder();
+    
+    //First, search by address
+    return geocoder.geocode({'address': address + ', Georgia Institute of Technology'}, function(results, status) 
+    {
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+            var location = results[0]['geometry']['location'];
+            updateMap(location.lat(), location.lng());
+        }
+    });
+    
+    //If that fails, search by name
+    return geocoder.geocode({'address': name + ', Georgia Institute of Technology'}, function(results, status) 
+    {
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+            var location = results[0]['geometry']['location'];
+            updateMap(location.lat(), location.lng());
+        }
+    });
+    
+    //If that fails, search by address up to first comma
+    return geocoder.geocode({'address': address.substr(0, address.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
+    {
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+            var location = results[0]['geometry']['location'];
+            updateMap(location.lat(), location.lng());
+        }
+    });
+    
+    //If that fails, search by name up to first comma
+    return geocoder.geocode({'address': name.substr(0, name.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
+    {
+        if (status == google.maps.GeocoderStatus.OK)
+        {
+            var location = results[0]['geometry']['location'];
+            updateMap(location.lat(), location.lng());
+        }
+    });
+    
+    //If all that fails, GTPD should make better-formatted addresses
 }
 
 
@@ -138,19 +183,7 @@ function updateLogsList()
     var today = new Date();
     $('#logs a').each(function()
     {
-        var when;
-        
-        //Format time in common American 12-hour style
-        var time = logs[this.id]['Occurred']['Start Time'];
-        var time12 = (((parseInt(time.substr(0, 2)) + 11) % 12) + 1) + time.substr(2);
-        if (+time.substr(0, time.indexOf(':')) < 12)
-        {
-            when = '<strong>' + time12 + '</strong>AM';
-        }
-        else
-        {
-            when = '<strong>' + time12 + '</strong>PM';
-        }
+        var when = get12Hour(logs[this.id]['Occurred']['Start Time'])
         
         //If not today, add date
         var date = new Date(logs[this.id]['Occurred']['Start Date']);
@@ -171,9 +204,43 @@ function updateLogsList()
 }
 
 
+function updateMap(lat, lon)
+{
+    console.log('Mapping coordinates: ' + lat + ', ' + lon);
+    $('#map').gmap({
+        'center': new google.maps.LatLng(lat, lon), 
+        'zoom': 14, 
+        'disableDefaultUI': true,
+        'noClear': false,
+        'callback': function() 
+        {
+            var self = this;
+            self.addMarker({
+                'position': this.get('map').getCenter(),
+            });
+            self.refresh();
+        }
+    });
+}
+
+
 function updateReport()
 {
-    $('#description').html('<pre>' + JSON.stringify(logs[casenumber], null, 4) + '</pre>');
+    var report = logs[casenumber];
+    
+    $('#nature').html(report['Nature']);
+    $('#status').html(report['Status']);
+    $('#disposition').html(report['Disposition']);
+    $('#casenumber').html(report['Case Number']);
+    $('#starttime').html(get12Hour(report['Occurred']['Start Time']));
+    $('#startdate').html(report['Occurred']['Start Date']);
+    $('#endtime').html(get12Hour(report['Occurred']['End Time']));
+    $('#enddate').html(report['Occurred']['End Date']);
+    $('#reported').html(report['Date Reported']);
+    $('#location-name').html(report['Location']['Name']);
+    $('#location-address').html(report['Location']['Address']);
+    
+    geocode(report['Location']);
 }
 
 

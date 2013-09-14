@@ -5,3 +5,14 @@
     line-height: 140%;
     width: 25%;
 }
+
+#report #location-name
+{
+    display: block;
+}
+
+#report #map
+{
+    height: 200px;
+}
+
