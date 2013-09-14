@@ -43,8 +43,8 @@ function getLogs()
             "Status"=>trimHarder($td->item(4)->nodeValue),
             "Location"=>array
             (
-                "Name"=>substr($location, 0, strpos($location, " - ")),
                 //Google geocode prefers '&' for intersections, instead of '@'
+                "Name"=>str_replace("@", "&", substr($location, 0, strpos($location, " - "))),
                 "Address"=>str_replace("@", "&", substr($location, strpos($location, " - ") ? strpos($location, " - ")+3 : 0)),
             ),
             "Nature"=>trimHarder(substr($rowsCrime[$i+1]->nodeValue, strpos($rowsCrime[$i+1]->nodeValue, ": Nature: ")+10)),
@@ -91,8 +91,8 @@ function getLogs()
             "Status"=>trimHarder($td->item(4)->nodeValue),
             "Location"=>array
             (
-                "Name"=>substr($location, 0, strpos($location, " - ")),
                 //Google geocode prefers '&' for intersections, instead of '@'
+                "Name"=>str_replace("@", "&", substr($location, 0, strpos($location, " - "))),
                 "Address"=>str_replace("@", "&", substr($location, strpos($location, " - ") ? strpos($location, " - ")+3 : 0)),
             ),
             "Nature"=>trim(str_replace(chr(194).chr(160), '', substr($td2, strpos($td2, "Nature:")+9))),

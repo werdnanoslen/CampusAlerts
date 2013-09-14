@@ -8,11 +8,12 @@ var casenumber = '';
 $(document).on('mobileinit', function()
 {
     $.mobile.defaultPageTransition = 'slide';
+    $.mobile.loadingMessage = true;
     $.mobile.loadingMessageTextVisible = true;
 });
 
 
-$('#main').on('pagebeforeshow', function()
+$('#main').on('pageshow', function()
 {
     if (undefined == logs || 0 == Object.size(logs))
     {
@@ -25,7 +26,7 @@ $('#main').on('pagebeforeshow', function()
 });
 
 
-$('#report').on('pagebeforeshow', function()
+$('#report').on('pageshow', function()
 {
     casenumber = $.url().fparam('number');
     if (undefined == casenumber || casenumber.length < 1)
@@ -82,9 +83,12 @@ function getLogs(callback)
 			logsKeys.reverse();
 			
 			console.log('Fetched ' + Object.size(logs) + ' logs');
-			$.mobile.hidePageLoadingMsg();
 		},
-		complete: callback
+		complete: function(data)
+		{
+		    $.mobile.hidePageLoadingMsg();
+		    callback();
+		}
 	});
 }
 
@@ -94,7 +98,7 @@ function get12Hour(time)
 {
     var time12 = (((parseInt(time.substr(0, 2)) + 11) % 12) + 1) + time.substr(2);
     time12 = '<strong>' + time12 + '</strong>';
-    return (+time.substr(0, time.indexOf(':')) < 12) ? time12 + 'AM' : tie12 + 'PM';
+    return (+time.substr(0, time.indexOf(':')) < 12) ? time12 + 'AM' : time12 + 'PM';
 }
 
 
@@ -105,46 +109,54 @@ function geocode(location)
     var geocoder = new google.maps.Geocoder();
     
     //First, search by address
-    return geocoder.geocode({'address': address + ', Georgia Institute of Technology'}, function(results, status) 
+    geocoder.geocode({'address': address + ', Georgia Institute of Technology'}, function(results, status) 
     {
         if (status == google.maps.GeocoderStatus.OK)
         {
             var location = results[0]['geometry']['location'];
             updateMap(location.lat(), location.lng());
         }
-    });
-    
-    //If that fails, search by name
-    return geocoder.geocode({'address': name + ', Georgia Institute of Technology'}, function(results, status) 
-    {
-        if (status == google.maps.GeocoderStatus.OK)
+        else
         {
-            var location = results[0]['geometry']['location'];
-            updateMap(location.lat(), location.lng());
+            //If that fails, search by name
+            geocoder.geocode({'address': name + ', Georgia Institute of Technology'}, function(results, status) 
+            {
+                if (status == google.maps.GeocoderStatus.OK)
+                {
+                    var location = results[0]['geometry']['location'];
+                    updateMap(location.lat(), location.lng());
+                }
+                else
+                {
+                    //If that fails, search by address up to first comma
+                    geocoder.geocode({'address': address.substr(0, address.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
+                    {
+                        if (status == google.maps.GeocoderStatus.OK)
+                        {
+                            var location = results[0]['geometry']['location'];
+                            updateMap(location.lat(), location.lng());
+                        }
+                        else
+                        {
+                            //If that fails, search by name up to first comma
+                            geocoder.geocode({'address': name.substr(0, name.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
+                            {
+                                if (status == google.maps.GeocoderStatus.OK)
+                                {
+                                    var location = results[0]['geometry']['location'];
+                                    updateMap(location.lat(), location.lng());
+                                }
+                                else
+                                {
+                                    //If all that fails, GTPD should make better-formatted addresses
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         }
     });
-    
-    //If that fails, search by address up to first comma
-    return geocoder.geocode({'address': address.substr(0, address.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
-    {
-        if (status == google.maps.GeocoderStatus.OK)
-        {
-            var location = results[0]['geometry']['location'];
-            updateMap(location.lat(), location.lng());
-        }
-    });
-    
-    //If that fails, search by name up to first comma
-    return geocoder.geocode({'address': name.substr(0, name.indexOf(',')) + ', Georgia Institute of Technology'}, function(results, status) 
-    {
-        if (status == google.maps.GeocoderStatus.OK)
-        {
-            var location = results[0]['geometry']['location'];
-            updateMap(location.lat(), location.lng());
-        }
-    });
-    
-    //If all that fails, GTPD should make better-formatted addresses
 }
 
 
@@ -209,7 +221,7 @@ function updateMap(lat, lon)
     console.log('Mapping coordinates: ' + lat + ', ' + lon);
     $('#map').gmap({
         'center': new google.maps.LatLng(lat, lon), 
-        'zoom': 14, 
+        'zoom': 15, 
         'disableDefaultUI': true,
         'noClear': false,
         'callback': function() 
@@ -230,7 +242,10 @@ function updateReport()
     
     $('#nature').html(report['Nature']);
     $('#status').html(report['Status']);
-    $('#disposition').html(report['Disposition']);
+    if(report['Disposition'].length > 0)
+    {
+        $('#disposition').html(' &ndash; ' + report['Disposition']);
+    }
     $('#casenumber').html(report['Case Number']);
     $('#starttime').html(get12Hour(report['Occurred']['Start Time']));
     $('#startdate').html(report['Occurred']['Start Date']);
