@@ -99,8 +99,8 @@ function getLogs()
         );
     }
     
-    //Sort by case number, which is also chronologically assigned
-    ksort($reports);
+    //Sort descending by case number, which is also chronologically assigned
+    krsort($reports);
     
     return $reports;
 }
