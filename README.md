@@ -9,11 +9,17 @@ As this is initially for the Georgia Tech community, this app is built on the [G
 
 
 Milestones
-------------
+----------
 
-### Prototype (in progress)
+### More Features (in progress)
+1. **Search reports (in progress)**
+2. Filter reports by crime, non-crime, location (auto & manual)
+3. Refresh reports
+4. Request more reports
+
+### ~~Prototype (complete)~~
 1. ~~Scrape data from [crime logs](http://www.police.gatech.edu/crimeinfo/crimelogs/crimelog.php) and [non-crime logs](http://www.police.gatech.edu/crimeinfo/crimelogs/noncrimelog.php)~~ (complete)
 2. ~~Display events as listview with their nature, time, and location~~ (complete)
-3. ~Link each list item to its own page~~ (complete)
-4. Set up report pages with all log info and a map
+3. ~~Link each list item to its own page~~ (complete)
+4. ~~Set up report pages with all log info and a map~~ (complete)
 
