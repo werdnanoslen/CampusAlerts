@@ -26,6 +26,49 @@ $('#main').on('pageshow', function()
     {
         updateLogsList();
     }
+    
+    if ($('#filter-list').is(':visible'))
+    {
+        
+    }
+});
+
+
+$('#main').on('click', function() 
+{
+    $('#filter-list').slideUp();
+});
+
+
+$('#filter').on('click', function(e)
+{
+    //Cancel #main click slideUp action
+    e.stopPropagation();
+    $('#filter-list').slideToggle();
+});
+
+
+$('input[name=filter]').on('click', function()
+{
+    switch ($(this).val())
+    {
+        case 'all':
+            $('#logs li').show();
+            console.log('Showing all reports');
+            break;
+            
+        case 'crime':
+            $('#logs li[data-crime=true]').show();
+            $('#logs li[data-crime=false]').hide();
+            console.log("Showing crime reports only");
+            break;
+            
+        case 'non-crime':
+            $('#logs li[data-crime=false]').show();
+            $('#logs li[data-crime=true]').hide();
+            console.log("Showing non-crime reports only");
+            break;
+    }
 });
 
 
@@ -172,6 +215,7 @@ function updateLogsList()
     $.each(logsKeys, function()
     {
         var report = document.createElement('li');
+        $(report).attr('data-crime', logs[this]['Criminal']);        
         var link = document.createElement('a');
         link.id = this;
         link.innerHTML = '<h2>' + logs[this]['Nature'] + '</h2>';

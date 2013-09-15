@@ -1,41 +1,54 @@
-<div data-role='page' id='main'>
-    <div data-role='header' data-position='inline'>
+<div data-role="page" id="main">
+    <div data-role="header" data-position="inline">
 	    <h1>CampusAlerts</h1>
-	    <a data-icon="gear" class="ui-btn-right">Options</a>
+        <a id="filter" data-icon="gear" data-role="button" class="ui-btn-right">Filter</a>
    	</div><!-- #header -->
 	
-	<div id='content' data-role='content'>
-		<ul id='logs' data-role='listview'>
+	<div data-role="content">
+	    <div id="filter-list" data-role="fieldcontain">
+         	<fieldset data-role="controlgroup">
+		        <input type="radio" name="filter" value="all" id="filter-all" checked />
+		        <label for="filter-all">All reports</label>
+		        
+		        <input type="radio" name="filter" value="crime" id="filter-crime"/>
+		        <label for="filter-crime">Crime only</label>
+		        
+		        <input type="radio" name="filter" value="non-crime" id="filter-non-crime"/>
+		        <label for="filter-non-crime">Non-Crime only</label>
+            </fieldset>
+        </div>
+	
+		<ul id="logs" data-role="listview" data-filter="true" data-filter-placeholder="Search reports">
 		</ul> <!-- #logs -->
 	</div><!-- #content -->
 </div> <!-- page -->
 
 
-<div data-role='page' id='report'>
-    <div data-role='header' data-position='inline'>
+<div data-role="page" id="report">
+    <div data-role="header" data-position="inline">
 	    <h1>CampusAlerts</h1>
 	    <a href="#main" data-icon="back" data-direction="reverse" class="ui-btn-right">Back</a>
    	</div><!-- #header -->
 	
-	<div data-role='content'>
-	    <h1 id='nature'></h1>
+	<div data-role="content">
+	    <h1 id="nature"></h1>
 	    <p>
-	        <span id='status'></span><span id='disposition'></span><br />
-	        Case #<span id='casenumber'></span>
+	        <span id="status"></span><span id="disposition"></span><br />
+	        Case #<span id="casenumber"></span>
         </p>
 	    
 	    <h2>Occurred:</h2>
 	    <p>
-	        <span id='starttime'></span> <span id='startdate'></span> 
+	        <span id="starttime"></span> <span id="startdate"></span> 
 	        &ndash; 
-	        <span id='endtime'></span> <span id='enddate'></span><br />
-	        (Reported on <span id='reported'></span>)
+	        <span id="endtime"></span> <span id="enddate"></span><br />
+	        (Reported on <span id="reported"></span>)
 	    </p>
 	    
 	    <h2>Location:</h2>
 	    <p>
-	        <span id='location-name'></span>
-	        <span id='location-address'></span>
+	        <span id="location-name"></span>
+	        <span id="location-address"></span>
         </p>
         
         <div id="map"></div>

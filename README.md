@@ -1,7 +1,7 @@
 CampusAlerts
 ============
 
-Compiles and alerts users to important events on campus
+Compiles and alerts users to campus safety events
 
 [Demo CampusAlerts](http://m.cip.gatech.edu/developer/anelson35/w/CampusAlerts/content/)
 
@@ -12,10 +12,11 @@ Milestones
 ----------
 
 ### More Features (in progress)
-1. **Search reports (in progress)**
-2. Filter reports by crime, non-crime, location (auto & manual)
-3. Refresh reports
+1. ~~Search reports (complete)~~
+2. ~~Filter reports by crime, non-crime (complete)~~
+3. **Refresh reports**
 4. Request more reports
+5. Filter by location
 
 ### ~~Prototype (complete)~~
 1. ~~Scrape data from [crime logs](http://www.police.gatech.edu/crimeinfo/crimelogs/crimelog.php) and [non-crime logs](http://www.police.gatech.edu/crimeinfo/crimelogs/noncrimelog.php)~~ (complete)

@@ -1,3 +1,25 @@
+#main div[data-role=content]
+{
+    position: relative;
+}
+
+#main #filter-list
+{
+    display: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    z-index: 10;
+    margin: 0;
+    border: 2px solid #2F3E46;
+}
+
+#main #filter-list .ui-controlgroup-controls
+{
+    width: 100%;
+}
+
 #logs p.ui-li-aside
 {
     margin-top: .8em;
