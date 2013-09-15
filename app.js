@@ -10,6 +10,9 @@ $(document).on('mobileinit', function()
     $.mobile.defaultPageTransition = 'slide';
     $.mobile.loadingMessage = true;
     $.mobile.loadingMessageTextVisible = true;
+    
+    //Initialize map centered on Tech
+    $('#map').gmap({'center': new google.maps.LatLng(33.7765, -84.4002)});
 });
 
 
@@ -48,11 +51,13 @@ $('#report').on('pageshow', function()
 });
 
 
-//Cleanup of URL so we can have better client URL support
 $('#report').on('pagehide', function()
 {
+    //Cleanup of URL so we can have better client URL support
     $(this).attr('data-url',$(this).attr('id'));
     delete $(this).data()['url'];
+    
+    $('#map').gmap('destroy');
 });
 
 
@@ -101,7 +106,7 @@ function get12Hour(time)
     return (+time.substr(0, time.indexOf(':')) < 12) ? time12 + 'AM' : time12 + 'PM';
 }
 
-
+    
 function geocode(location)
 {
     var address = location['Address'];
@@ -195,9 +200,14 @@ function updateLogsList()
     var today = new Date();
     $('#logs a').each(function()
     {
+        if (null === logs[this.id]['Occurred']['Start Time'])
+        {
+            return true;
+        }
+        
         var when = get12Hour(logs[this.id]['Occurred']['Start Time'])
         
-        //If not today, add date
+        //If not today, use date
         var date = new Date(logs[this.id]['Occurred']['Start Date']);
         if (date.getDay() != today.getDay()
                 || date.getMonth() != today.getMonth()
@@ -217,13 +227,12 @@ function updateLogsList()
 
 
 function updateMap(lat, lon)
-{
+{    
     console.log('Mapping coordinates: ' + lat + ', ' + lon);
+    $('#map').gmap('destroy');
     $('#map').gmap({
         'center': new google.maps.LatLng(lat, lon), 
         'zoom': 15, 
-        'disableDefaultUI': true,
-        'noClear': false,
         'callback': function() 
         {
             var self = this;
