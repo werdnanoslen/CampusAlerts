@@ -12,9 +12,9 @@ Milestones
 ----------
 
 ### More Features (in progress)
-1. ~~Search reports (complete)~~
-2. ~~Filter reports by crime, non-crime (complete)~~
-3. **Refresh reports**
+1. ~~Search reports~~ (complete)
+2. ~~Filter reports by crime, non-crime~~ (complete)
+3. **Refresh reports** (in-progress)
 4. Request more reports
 5. Filter by location
 
