@@ -1,7 +1,7 @@
 CampusAlerts
 ============
 
-Compiles and alerts users to campus safety events
+Compiles and alerts users to campus safety events. It is a mobile web app, taking advantage of mobile devices as common sources of notifications. The list view makes the information more readable and searchable for quick scanning. The data is also now exposed via an API, thanks to my scraper, allowing other developers to use it for other apps. Users can filter the events by crime or non-crime, as well as search the content. Campus Alerts could potentially be harnessed by the GTPD as another channel to alert students﻿
 
 [Demo CampusAlerts](http://m.cip.gatech.edu/developer/anelson35/w/CampusAlerts/content/)
 
